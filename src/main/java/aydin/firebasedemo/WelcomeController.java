@@ -13,43 +13,36 @@ public class WelcomeController {
 
     @FXML
     private void onRegisterClicked() {
-        String email = emailField.getText();
-        String pass  = passwordField.getText();
-        if (email.isBlank() || pass.isBlank()) {
-            messageLabel.setText("Email and password required.");
-            return;
-        }
+        String email = safe(emailField.getText());
+        String pass  = safe(passwordField.getText());
         try {
             UserAuth.register(email, pass);
             messageLabel.setText("Registered successfully.");
         } catch (Exception e) {
-            messageLabel.setText("Register error: " + shortMsg(e));
+            messageLabel.setText(shortMsg(e));
         }
     }
 
     @FXML
     private void onSignInClicked() {
-        String email = emailField.getText();
-        String pass  = passwordField.getText();
-        if (email.isBlank() || pass.isBlank()) {
-            messageLabel.setText("Email and password required.");
-            return;
-        }
+        String email = safe(emailField.getText());
+        String pass  = safe(passwordField.getText());
         try {
             boolean ok = UserAuth.signIn(email, pass);
             if (ok) {
                 messageLabel.setText("Sign in successful.");
-                DemoApp.setRoot("primary"); // go to data access screen
+                DemoApp.setRoot("primary");
             } else {
                 messageLabel.setText("Invalid credentials.");
             }
         } catch (Exception e) {
-            messageLabel.setText("Sign in error: " + shortMsg(e));
+            messageLabel.setText(shortMsg(e));
         }
     }
 
+    private String safe(String s) { return s == null ? "" : s.trim(); }
     private String shortMsg(Exception e) {
         String m = e.getMessage();
-        return m == null ? e.getClass().getSimpleName() : m.split("\\R", 2)[0];
+        return (m == null || m.isBlank()) ? "Error" : m;
     }
 }
